@@ -27,4 +27,8 @@ jobs:
             git pull origin main
             npm install
             npm run build
+            mv dist .. 
+            cd ..
+            rm -rf public_html
+            mv dist public_html
           EOF
