@@ -1,4 +1,4 @@
- name: Deploy to Mangeot Server
+name: Deploy to Mangeot Server
 
 on:
   push:
@@ -11,6 +11,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
       - name: Setup SSH
         uses: webfactory/ssh-agent@v0.5.4
         with:
@@ -18,9 +21,10 @@ jobs:
 
       - name: SSH into Server and Deploy
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
-          "cd ${{ secrets.WORK_DIR }} && \
-          git fetch origin main && \
-          git reset --hard origin/main && \
-          npm install && \
-          npm run build"
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+            set -e
+            cd ${{ secrets.WORK_DIR }}
+            git pull origin main
+            npm install
+            npm run build
+          EOF
